@@ -20,6 +20,10 @@ export const useSwipeScroll = (options) => {
   };
 
   const handleSwipe = (event) => {
+    if (event.target != event.currentTarget) {
+      return;
+    }
+
     const a = event.deltaY;
     setTotalScroll(
       Math.max(0, Math.min(threshold * itemCount, totalScrolled + a))
@@ -30,12 +34,13 @@ export const useSwipeScroll = (options) => {
     listRef.current.addEventListener("wheel", handleSwipe);
 
     return function cleanup() {
-      listRef.current.removeEventListener("wheel", handleSwipe);
+      if (listRef.current) {
+        listRef.current.removeEventListener("wheel", handleSwipe);
+      }
     };
   });
 
   useEffect(() => {
-    console.log(index);
     setIndex(parseInt(totalScrolled / threshold));
   }, [totalScrolled]);
 
@@ -65,10 +70,11 @@ export const SwipeList = (props) => {
   const listRef = useRef(null);
 
   const handleSwipe = (event) => {
+    if (event.currentTarget != event.target) {
+      return;
+    }
+
     const a = event.deltaY;
-
-    console.log(event.currentTarget);
-
     setTotalScroll(
       Math.max(0, Math.min(threshold * itemCount, totalScrolled + a))
     );
@@ -78,7 +84,9 @@ export const SwipeList = (props) => {
     listRef.current.addEventListener("wheel", handleSwipe);
 
     return function cleanup() {
-      listRef.current.removeEventListener("wheel", handleSwipe);
+      if (listRef.current) {
+        listRef.current.removeEventListener("wheel", handleSwipe);
+      }
     };
   });
 
